@@ -52,4 +52,8 @@ class PositionsOfShips extends FlatSpec with Matchers {
   it should "be also smaller than the maximal speed" in {
     avgSpeedOf(Luise) should be < 200.0
   }
+
+  "average speed of Berta" should "be Zero" in {
+    avgSpeedOf(Berta) should be(0.0)
+  }
 }

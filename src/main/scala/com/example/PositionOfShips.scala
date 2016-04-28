@@ -1,6 +1,7 @@
 package com.example
 
 import scala.math.{pow, sqrt}
+import scala.util.Try
 
 
 class PositionOfShips(positions: Vector[Position]) {
@@ -28,12 +29,16 @@ class PositionOfShips(positions: Vector[Position]) {
     val totalDistance =
       pos
         .sliding(2)
-        .map { case Vector(a, b) =>
+        .map {
+        case Vector(a) => 0.0
+        case Vector(a, b) =>
           a.position.distance(b.position)
-        }
+      }
         .sum
 
-    totalDistance / pos.head.timeDelta(pos.last)
+    val totalTime = pos.head.timeDelta(pos.last)
+
+    if (totalTime > 0.0) totalDistance / totalTime else 0.0
   }
 
   // Sehr ähnlich wie die Lösung oben, aber mehr mit den "Brot und Butter" Operationen
@@ -47,10 +52,12 @@ class PositionOfShips(positions: Vector[Position]) {
     val totalDistance =
       pos.zip(pos.tail)
         .foldLeft(0.0) { case (total, (a, b)) =>
-          total + a.position.distance(b.position)
-        }
+        total + a.position.distance(b.position)
+      }
 
-    totalDistance / pos.head.timeDelta(pos.last)
+    val totalTime = pos.head.timeDelta(pos.last)
+
+    if (totalTime > 0.0) totalDistance / totalTime else 0.0
   }
 
   // Typischer Hammer in FP, wenn man nicht weiter weiß: Rekursion.
@@ -68,7 +75,9 @@ class PositionOfShips(positions: Vector[Position]) {
         case _ => 0.0 // case _ => else
       }
 
-    totalDistance(pos) / pos.head.timeDelta(pos.last)
+    val totalTime = pos.head.timeDelta(pos.last)
+
+    if (totalTime > 0.0) totalDistance(pos) / totalTime else 0.0
   }
 
   // Und zuletzt die eine imperative Variante
@@ -90,7 +99,10 @@ class PositionOfShips(positions: Vector[Position]) {
     }
 
     // Das Schlüsselwort "return" ist nicht notwendig, just for fun
-    return totalDistance / totalTime
+    if (totalTime > 0.0)
+      return totalDistance / totalTime
+    else
+      return 0.0
   }
 
   def knownShips: Vector[Ship] =
